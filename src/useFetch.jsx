@@ -1,26 +1,28 @@
 import { useEffect, useState } from "react";
-import _ from "lodash";
 
-const usePaginatedFetch = (url, pageSize) => {
+const useFetch = (url, sieveModel) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
   const getData = async () => {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(sieveModel),
+      headers: {
+        "content-type": "application/json;charset-UTF-8",
+      },
+    });
     const data = await response.json();
 
-    const paginatedData = _.chunk(data, pageSize);
-    console.log(paginatedData);
-
     setLoading(false);
-    setData(paginatedData);
+    setData(data);
   };
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [sieveModel.page]);
 
   return [loading, data];
 };
 
-export default usePaginatedFetch;
+export default useFetch;
